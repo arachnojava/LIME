@@ -1,0 +1,179 @@
+import mhframework.*;
+
+import java.awt.*;
+import java.awt.geom.*;
+import java.awt.event.*;
+import javax.swing.JFileChooser;
+
+
+public class IMEScreenBase extends MHScreen
+{
+    private boolean singleScreen = true;
+    private boolean showOpenDialog = false;
+    private boolean showSaveDialog = false;
+
+
+    protected static MHGUIButtonMenu viewMenu;
+    protected static MHGUIButton mapViewButton;      // WYSIWYG map view
+    protected static MHGUIButton mapEditButton;      // Edit map tiles
+    protected static MHGUIButton tilesetViewButton;  // View complete tile set
+    protected static MHGUIButton dataViewButton;     // View raw map data
+
+
+    protected static MHGUIButtonMenu fileMenu;
+    protected static MHGUIButton fileSaveButton;
+    protected static MHGUIButton fileOpenButton;
+    protected static MHGUIButton fileExitButton;
+
+
+
+    public IMEScreenBase()
+    {
+		super();
+
+        viewMenu = new MHGUIButtonMenu();
+        viewMenu.setText("View Menu");
+        viewMenu.setBackgroundColor(Color.BLACK);
+        viewMenu.setTextColor(Color.WHITE);
+
+        mapViewButton = new MHGUIButton();
+        mapViewButton.setText("View Map");
+        mapViewButton.addActionListener(this);
+
+        mapEditButton = new MHGUIButton();
+        mapEditButton.setText("Edit Map");
+        mapEditButton.addActionListener(this);
+
+        dataViewButton = new MHGUIButton();
+        dataViewButton.setText("View Map Data");
+        dataViewButton.addActionListener(this);
+
+        tilesetViewButton  = new MHGUIButton();
+        tilesetViewButton.addActionListener(this);
+        tilesetViewButton.setText("View Tile Set");
+
+
+        viewMenu.add(mapViewButton);
+        viewMenu.add(mapEditButton);
+        viewMenu.add(dataViewButton);
+        viewMenu.add(tilesetViewButton);
+
+        viewMenu.setPosition(640 - 10 - (int)viewMenu.getBounds().getWidth(), 10);
+
+
+        fileMenu = new MHGUIButtonMenu();
+        fileMenu.setText("File Menu");
+        fileMenu.setBackgroundColor(Color.BLACK);
+        fileMenu.setTextColor(Color.WHITE);
+
+        fileOpenButton = new MHGUIButton();
+        fileOpenButton.setText("Open");
+        fileOpenButton.addActionListener(this);
+
+        fileSaveButton = new MHGUIButton();
+        fileSaveButton.setText("Save");
+        fileSaveButton.addActionListener(this);
+
+        fileExitButton = new MHGUIButton();
+        fileExitButton.setText("Exit");
+        fileExitButton.addActionListener(this);
+
+        fileMenu.add(fileOpenButton);
+        fileMenu.add(fileSaveButton);
+        fileMenu.add(fileExitButton);
+
+        fileMenu.setPosition(viewMenu.getX(), 480 - 10 - (int)fileMenu.getBounds().getHeight());
+
+        add(viewMenu);
+        add(fileMenu);
+
+        load();
+    }
+
+
+    public void load()
+    {
+        setFinished(false);
+        singleScreen = true;
+    }
+
+
+    public void unload()
+    {
+        singleScreen = false;
+    }
+
+
+    public void render(Graphics g)
+    {
+        if (singleScreen)
+        {
+            g.setColor(Color.LIGHT_GRAY);
+            g.fillRect(0, 0, 640, 480);
+
+			// Draw map here
+			IMEDataModel.getInstance().map.render(g);
+
+            g.setColor(Color.BLACK);
+            g.drawString(IMEDataModel.APP_TITLE, 10, 442);
+            g.drawString("Version " + IMEDataModel.APP_VERSION, 10, 456);
+            g.drawString("by " + IMEDataModel.APP_AUTHOR, 10, 470);
+        }
+
+        if (showOpenDialog)
+        {
+            JFileChooser openDlg = new JFileChooser();
+            int rc = openDlg.showOpenDialog(MHDisplayModeChooser.getCanvas());
+            if (rc == JFileChooser.APPROVE_OPTION)
+            {
+            }
+
+            showOpenDialog = false;
+        }
+
+        if (showSaveDialog)
+        {
+            JFileChooser saveDlg = new JFileChooser();
+            int rc = saveDlg.showSaveDialog(MHDisplayModeChooser.getCanvas());
+            if (rc == JFileChooser.APPROVE_OPTION)
+            {
+            }
+
+            showSaveDialog = false;
+        }
+
+        super.render(g);
+    }
+
+
+    public void advance()
+    {
+    }
+
+
+    public void actionPerformed(ActionEvent e)
+    {
+        if (e.getSource() == mapViewButton)
+        {
+        }
+        else if (e.getSource() == mapEditButton)
+        {
+        }
+        else if (e.getSource() == tilesetViewButton)
+        {
+        }
+        else if (e.getSource() == fileOpenButton)
+        {
+            showOpenDialog = true;
+        }
+        else if (e.getSource() == fileSaveButton)
+        {
+            showSaveDialog = true;
+        }
+        else if (e.getSource() == fileExitButton)
+        {
+            IMEDataModel.getInstance().setProgramOver(true);
+        }
+    }
+
+}

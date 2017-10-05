@@ -1,0 +1,50 @@
+import mhframework.*;
+
+import java.awt.*;
+
+
+public class IMEDataModel extends MHDataModel
+{
+
+    private static IMEDataModel INSTANCE = new IMEDataModel();
+
+    public static final String APP_TITLE   = "LIME";
+    public static final String APP_VERSION = "1.0";
+    public static final String APP_AUTHOR  = "Michael Henson";
+
+	private MHStaggeredMap staggeredMap;
+    public MHIsometricMap map;
+    
+    
+
+    // Game screens
+    public static final IMEScreenBase BASE_SCREEN = new IMEScreenBase();
+
+    // Image groups
+
+
+    private IMEDataModel()
+    {
+		super();
+
+    	staggeredMap = new MHStaggeredMap(this, "Sample.dat", new IMEVendor());
+    	
+    	map = staggeredMap;
+    }
+
+
+    public static IMEDataModel getInstance()
+    {
+        return INSTANCE;
+    }
+
+}
+
+
+class IMEVendor implements MHObjectVendor
+{
+	public MHStaticActor getObject(int layer, int tileID)
+	{
+		return null;
+	}
+}

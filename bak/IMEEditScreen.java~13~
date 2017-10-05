@@ -1,0 +1,556 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
+
+import mhframework.MHGUIButton;
+import mhframework.MHGUIButtonMenu;
+import mhframework.MHGUILabel;
+import mhframework.MHMapCell;
+import mhframework.MHMapCellAddress;
+import mhframework.MHScreen;
+import mhframework.MHStaticActor;
+
+/**
+ *
+ */
+public class IMEEditScreen extends MHScreen
+{
+    private IMETileSetNavigator navigator = new IMETileSetNavigator();
+
+    protected static MHGUIButtonMenu layerViewMenu;
+    protected static MHGUIButton viewItemsButton;
+    protected static MHGUIButton viewWallsButton;
+    protected static MHGUIButton viewCeilingsButton;
+
+    protected static MHGUIButtonMenu layerEditMenu;
+    protected static MHGUIButton editFloorButton;
+    protected static MHGUIButton editItemsButton;
+    protected static MHGUIButton editWallsButton;
+    protected static MHGUIButton editCeilingsButton;
+
+    protected static MHGUIButtonMenu toolsMenu;
+    protected static MHGUIButton toolsEraseButton;
+    protected static MHGUIButton toolsPickButton;
+
+
+    protected static MHGUIButton exitButton;
+
+    protected static MHGUIButton tsBackButton;
+    protected static MHGUIButton tsForwardButton;
+
+
+    protected static MHGUILabel tileSetLabel;
+    protected static MHGUILabel selectedLabel;
+
+    private boolean painting = false;
+    private boolean fastScrolling = false;
+    private boolean erasing = false;
+    private boolean pickTool = false;
+
+    private boolean[] layerFlags = new boolean[MHMapCell.NUM_LAYERS];
+
+    private int selectedLayer = MHMapCell.FLOOR_LAYER;
+
+    private MHStaticActor selectedTile = null;
+
+    /****************************************************************
+     */
+    public IMEEditScreen()
+    {
+        super();
+
+        navigator.setPosition(25, 375);
+        navigator.setLayer(MHMapCell.FLOOR_LAYER);
+        navigator.addActionListener(this);
+        this.add(navigator);
+
+        selectedTile = navigator.getSelectedTile();
+
+        layerViewMenu = new MHGUIButtonMenu();
+        layerViewMenu.setText("View");
+        layerViewMenu.setBackgroundColor(Color.LIGHT_GRAY);
+        layerViewMenu.setTextColor(Color.BLACK);
+        layerViewMenu.setButtonSize(60, 20);
+        layerViewMenu.setBorderSpacing(2);
+
+        viewItemsButton = new MHGUIButton();
+        viewItemsButton.setText("Items");
+        viewItemsButton.addActionListener(this);
+
+        viewWallsButton  = new MHGUIButton();
+        viewWallsButton.addActionListener(this);
+        viewWallsButton.setText("Walls");
+
+        viewCeilingsButton  = new MHGUIButton();
+        viewCeilingsButton.addActionListener(this);
+        viewCeilingsButton.setText("Ceilings");
+
+        layerViewMenu.add(viewCeilingsButton);
+        layerViewMenu.add(viewWallsButton);
+        layerViewMenu.add(viewItemsButton);
+        //layersMenu.add(layersFloorButton);
+
+        layerViewMenu.setPosition(640 - (int)layerViewMenu.getBounds().getWidth(), 0);
+
+
+        layerEditMenu = new MHGUIButtonMenu();
+        layerEditMenu.setText("Edit");
+        layerEditMenu.setBackgroundColor(Color.LIGHT_GRAY);
+        layerEditMenu.setTextColor(Color.BLACK);
+        layerEditMenu.setButtonSize(60, 20);
+        layerEditMenu.setBorderSpacing(2);
+
+        editFloorButton = new MHGUIButton();
+        editFloorButton.setText("Floor");
+        editFloorButton.addActionListener(this);
+
+        editItemsButton = new MHGUIButton();
+        editItemsButton.setText("Items");
+        editItemsButton.addActionListener(this);
+
+        editWallsButton  = new MHGUIButton();
+        editWallsButton.addActionListener(this);
+        editWallsButton.setText("Walls");
+
+        editCeilingsButton  = new MHGUIButton();
+        editCeilingsButton.addActionListener(this);
+        editCeilingsButton.setText("Ceilings");
+
+        layerEditMenu.add(editCeilingsButton);
+        layerEditMenu.add(editWallsButton);
+        layerEditMenu.add(editItemsButton);
+        layerEditMenu.add(editFloorButton);
+
+        layerEditMenu.setPosition(layerViewMenu.getX(),
+                                  layerViewMenu.getY()+(int)layerViewMenu.getBounds().getHeight()+2);
+
+        toolsMenu = new MHGUIButtonMenu();
+        toolsMenu.setText("Tools");
+        toolsMenu.setBackgroundColor(Color.LIGHT_GRAY);
+        toolsMenu.setTextColor(Color.BLACK);
+        toolsMenu.setButtonSize(60, 20);
+        toolsMenu.setBorderSpacing(2);
+
+        toolsEraseButton = new MHGUIButton();
+        toolsEraseButton.setText("Erase");
+        toolsEraseButton.addActionListener(this);
+
+        toolsPickButton = new MHGUIButton();
+        toolsPickButton.setText("Pick");
+        toolsPickButton.addActionListener(this);
+
+        toolsMenu.add(toolsEraseButton);
+        toolsMenu.add(toolsPickButton);
+
+        toolsMenu.setPosition(layerEditMenu.getX(),
+                                  layerEditMenu.getY()+(int)layerEditMenu.getBounds().getHeight()+2);
+                                  
+        exitButton  = new MHGUIButton();
+        exitButton.addActionListener(this);
+        exitButton.setText("Done");
+        exitButton.setSize(60, 20);
+        exitButton.setPosition(toolsMenu.getX() + 2,
+                               toolsMenu.getY() + (int)toolsMenu.getBounds().getHeight() + 22);
+
+        tsBackButton = new MHGUIButton();
+        tsBackButton.addActionListener(this);
+        tsBackButton.setText("<");
+        tsBackButton.setSize(10, 96);
+        tsBackButton.setPosition(10, 375);
+
+        tsForwardButton = new MHGUIButton();
+        tsForwardButton.addActionListener(this);
+        tsForwardButton.setText(">");
+        tsForwardButton.setSize(10, 96);
+        tsForwardButton.setPosition(510, 375);
+
+        tileSetLabel = new MHGUILabel("Tile Set:");
+
+        selectedLabel = new MHGUILabel("Selected Tile:");
+
+
+        add(layerViewMenu);
+        add(layerEditMenu);
+        add(toolsMenu);
+        add(exitButton);
+        add(tileSetLabel);
+        add(tsBackButton);
+        add(tsForwardButton);
+        add(selectedLabel);
+
+        for (int i = 0; i < layerFlags.length; i++)
+            layerFlags[i] = true;
+
+        load();
+    }
+
+
+    public void load()
+    {
+        IMEDataModel.getInstance().map.setScreenSpace(0, 0, 639 -
+                                        (int)layerViewMenu.getBounds().getWidth(), 350);
+
+        setFinished(false);
+    }
+
+
+    public void unload()
+    {
+    }
+
+
+    public void render(Graphics g)
+    {
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, 640, 480);
+
+            // Draw map here
+            IMEDataModel.getInstance().map.render(g, layerFlags);
+
+			if (erasing || pickTool)
+			{
+                StringBuffer sb = new StringBuffer();
+                Point p = IMEDataModel.getInstance().map.getCursorPoint();
+                
+				if (erasing) sb.append("ERASE ");
+				else sb.append("PICK ");
+				
+                if (this.selectedLayer == MHMapCell.FLOOR_LAYER)
+                	sb.append("FLOOR TILE");
+                if (this.selectedLayer == MHMapCell.ITEM_LAYER)
+                	sb.append("ITEM TILE");
+                if (this.selectedLayer == MHMapCell.WALL_LAYER)
+                	sb.append("WALL TILE");
+                if (this.selectedLayer == MHMapCell.CEILING_LAYER)
+                	sb.append("CEILING TILE");
+                
+                g.drawString(sb.toString(), p.x, p.y + 20);
+                
+			}
+
+            // Draw map interface stuff here
+            g.setColor(Color.LIGHT_GRAY);
+            // Bottom (tile set) panel
+            g.fillRect(0, 351, 640 - (int)layerViewMenu.getBounds().getWidth(), 480);
+            // Right (menu) panel
+            g.fillRect(640 - (int)layerViewMenu.getBounds().getWidth(), 0,
+                       (int)layerViewMenu.getBounds().getWidth(), 480);
+
+            Rectangle2D bounds = IMEDataModel.getInstance().map.getScreenSpace();
+            g.setColor(Color.BLUE);
+            g.drawRect((int)bounds.getX(), (int)bounds.getY(), (int)bounds.getWidth(), (int)bounds.getHeight());
+
+            // Tile set navigator
+            tileSetLabel.setPosition(10, (int)bounds.getHeight() + 20);
+            navigator.render(g);
+
+            // Selected Tile:
+            g.setColor(Color.LIGHT_GRAY);
+            g.fill3DRect(535, 375, 96, 96, false);
+
+            try
+            {
+                java.awt.Image image = selectedTile.getImage();
+                if (image != null)
+                {
+                    selectedTile.setLocation(535 + (96 / 2) -
+                                             image.getWidth(null) / 2,
+                                             375 + (96 / 2) -
+                                             image.getHeight(null) / 2);
+                    selectedTile.render(g);
+                }
+            } catch (Exception e) {}
+
+            selectedLabel.setPosition(535, (int)bounds.getHeight() + 20);
+
+            // Map cursor
+            MHMapCellAddress cursor = IMEDataModel.getInstance().map.getCursorAddress();
+            g.setColor(Color.WHITE);
+            g.drawString("Map Cell:  " + cursor.row + ", " + cursor.column, 6, 12);
+        super.render(g);
+    }
+
+
+    public void advance()
+    {
+        IMEDataModel.getInstance().map.advance();
+
+        navigator.setLayer(selectedLayer);
+        navigator.advance();
+
+        if (painting)
+        {
+            MHMapCellAddress cursor = IMEDataModel.getInstance().map.getCursorAddress();
+            MHMapCell currentCell = IMEDataModel.getInstance().map.getMapData().getMapCell(cursor.row, cursor.column);
+            if (erasing)
+                currentCell.setLayer(selectedLayer, null);
+            else
+                currentCell.setLayer(selectedLayer, selectedTile);
+                
+            IMEDataModel.getInstance().fileData.fileData[selectedLayer][cursor.row][cursor.column] = selectedTile.getAction();
+            IMEDataModel.getInstance().mapChanged = true;
+        }
+
+        if (layerFlags[MHMapCell.ITEM_LAYER])
+            viewItemsButton.setForeColor(Color.GREEN);
+        else
+            viewItemsButton.setForeColor(Color.RED);
+
+        if (layerFlags[MHMapCell.WALL_LAYER])
+            viewWallsButton.setForeColor(Color.GREEN);
+        else
+            viewWallsButton.setForeColor(Color.RED);
+
+        if (layerFlags[MHMapCell.CEILING_LAYER])
+            viewCeilingsButton.setForeColor(Color.GREEN);
+        else
+            viewCeilingsButton.setForeColor(Color.RED);
+
+        if (selectedLayer == MHMapCell.FLOOR_LAYER)
+        {
+            editFloorButton.setNormalColor(Color.BLUE);
+            editFloorButton.setOverColor(Color.BLUE);
+            editFloorButton.setForeColor(Color.WHITE);
+        }
+        else
+        {
+            editFloorButton.setNormalColor(MHGUIButton.NORMAL_COLOR);
+            editFloorButton.setOverColor(MHGUIButton.OVER_COLOR);
+            editFloorButton.setForeColor(Color.BLACK);
+        }
+
+        if (selectedLayer == MHMapCell.WALL_LAYER)
+        {
+            editWallsButton.setNormalColor(Color.BLUE);
+            editWallsButton.setOverColor(Color.BLUE);
+            editWallsButton.setForeColor(Color.WHITE);
+        }
+        else
+        {
+            editWallsButton.setNormalColor(MHGUIButton.NORMAL_COLOR);
+            editWallsButton.setOverColor(MHGUIButton.OVER_COLOR);
+            editWallsButton.setForeColor(Color.BLACK);
+        }
+
+        if (selectedLayer == MHMapCell.ITEM_LAYER)
+        {
+            editItemsButton.setNormalColor(Color.BLUE);
+            editItemsButton.setOverColor(Color.BLUE);
+            editItemsButton.setForeColor(Color.WHITE);
+        }
+        else
+        {
+            editItemsButton.setNormalColor(MHGUIButton.NORMAL_COLOR);
+            editItemsButton.setOverColor(MHGUIButton.OVER_COLOR);
+            editItemsButton.setForeColor(Color.BLACK);
+        }
+
+        if (selectedLayer == MHMapCell.CEILING_LAYER)
+        {
+            editCeilingsButton.setNormalColor(Color.BLUE);
+            editCeilingsButton.setOverColor(Color.BLUE);
+            editCeilingsButton.setForeColor(Color.WHITE);
+        }
+        else
+        {
+            editCeilingsButton.setNormalColor(MHGUIButton.NORMAL_COLOR);
+            editCeilingsButton.setOverColor(MHGUIButton.OVER_COLOR);
+            editCeilingsButton.setForeColor(Color.BLACK);
+        }
+
+        if (erasing)
+        {
+            toolsEraseButton.setNormalColor(Color.GREEN);
+            toolsEraseButton.setOverColor(Color.GREEN);
+            toolsEraseButton.setForeColor(Color.WHITE);
+        }
+        else
+        {
+            toolsEraseButton.setNormalColor(MHGUIButton.NORMAL_COLOR);
+            toolsEraseButton.setOverColor(MHGUIButton.OVER_COLOR);
+            toolsEraseButton.setForeColor(Color.BLACK);
+        }
+
+        if (pickTool)
+        {
+            toolsPickButton.setNormalColor(Color.GREEN);
+            toolsPickButton.setOverColor(Color.GREEN);
+            toolsPickButton.setForeColor(Color.WHITE);
+        }
+        else
+        {
+            toolsPickButton.setNormalColor(MHGUIButton.NORMAL_COLOR);
+            toolsPickButton.setOverColor(MHGUIButton.OVER_COLOR);
+            toolsPickButton.setForeColor(Color.BLACK);
+        }
+    }
+
+
+    public void actionPerformed(ActionEvent e)
+    {
+        if (e.getSource() == viewItemsButton)
+        {
+            if (selectedLayer != MHMapCell.ITEM_LAYER)
+                layerFlags[MHMapCell.ITEM_LAYER] = !layerFlags[MHMapCell.ITEM_LAYER];
+        }
+        else if (e.getSource() == viewWallsButton)
+        {
+            if (selectedLayer != MHMapCell.WALL_LAYER)
+                layerFlags[MHMapCell.WALL_LAYER] = !layerFlags[MHMapCell.WALL_LAYER];
+        }
+        else if (e.getSource() == viewCeilingsButton)
+        {
+            if (selectedLayer != MHMapCell.CEILING_LAYER)
+                layerFlags[MHMapCell.CEILING_LAYER] = !layerFlags[MHMapCell.CEILING_LAYER];
+        }
+        else if (e.getSource() == editFloorButton)
+        {
+            selectedLayer = MHMapCell.FLOOR_LAYER;
+        }
+        else if (e.getSource() == editItemsButton)
+        {
+            selectedLayer = MHMapCell.ITEM_LAYER;
+            layerFlags[MHMapCell.ITEM_LAYER] = true;
+        }
+        else if (e.getSource() == editWallsButton)
+        {
+            selectedLayer = MHMapCell.WALL_LAYER;
+            layerFlags[MHMapCell.WALL_LAYER] = true;
+        }
+        else if (e.getSource() == editCeilingsButton)
+        {
+            selectedLayer = MHMapCell.CEILING_LAYER;
+            layerFlags[MHMapCell.CEILING_LAYER] = true;
+        }
+        else if (e.getSource() == toolsEraseButton)
+        {
+			if (erasing)
+			    erasing = false;
+			else
+			{
+        	    erasing = true;
+                pickTool = false;
+			}
+        }
+        else if (e.getSource() == toolsPickButton)
+        {
+			if (pickTool)
+			    pickTool = false;
+			else
+			{
+                pickTool = true;
+        	    erasing = false;
+			}
+        }
+        else if (e.getSource() == tsBackButton)
+        {
+            if (fastScrolling)
+                navigator.scrollLeft(4);
+            else
+                navigator.scrollLeft();
+        }
+        else if (e.getSource() == tsForwardButton)
+        {
+            if (fastScrolling)
+                navigator.scrollRight(4);
+            else
+                navigator.scrollRight();
+        }
+        else if (e.getSource() == navigator)
+        {
+            selectedTile = navigator.getSelectedTile();
+            pickTool = false;
+            erasing = false;
+        }
+        else if (e.getSource() == exitButton)
+        {
+            setNextScreen(null);
+            setFinished(true);
+        }
+
+
+    }
+
+
+    public void keyPressed(KeyEvent e)
+    {
+        switch (e.getKeyCode())
+        {
+            case KeyEvent.VK_RIGHT:
+                IMEDataModel.getInstance().map.scrollMap(16, 0);
+                break;
+            case KeyEvent.VK_LEFT:
+                IMEDataModel.getInstance().map.scrollMap(-16, 0);
+                break;
+            case KeyEvent.VK_UP:
+                IMEDataModel.getInstance().map.scrollMap(0, -16);
+                break;
+            case KeyEvent.VK_DOWN:
+                IMEDataModel.getInstance().map.scrollMap(0, 16);
+                break;
+            case KeyEvent.VK_SHIFT:
+                fastScrolling = true;
+                break;
+        }
+    }
+
+
+    public void keyReleased(KeyEvent e)
+    {
+        switch (e.getKeyCode())
+        {
+            case KeyEvent.VK_SHIFT:
+                fastScrolling = false;
+                break;
+        }
+    }
+
+
+    public void mousePressed(MouseEvent e)
+    {
+        super.mousePressed(e);
+
+		if (IMEDataModel.getInstance().map.isScreenCoordinate(e.getPoint()))
+		{
+    		if (pickTool)
+    		{
+                MHMapCellAddress cursor = IMEDataModel.getInstance().map.getCursorAddress();
+                MHMapCell currentCell = IMEDataModel.getInstance().map.getMapData().getMapCell(cursor.row, cursor.column);
+		    	selectedTile = currentCell.getLayer(selectedLayer);
+		    	pickTool = false;
+    		}
+    		else
+    		{
+                painting = true;
+    		}
+		}
+    }
+
+
+    public void mouseReleased(MouseEvent e)
+    {
+        super.mouseReleased(e);
+
+        painting = false;
+    }
+
+
+    public void mouseDragged(MouseEvent e)
+    {
+        super.mouseDragged(e);
+
+        IMEDataModel.getInstance().map.mouseMoved(e);
+    }
+
+
+    public void mouseMoved(MouseEvent e)
+    {
+        super.mouseMoved(e);
+
+        IMEDataModel.getInstance().map.mouseMoved(e);
+    }
+}

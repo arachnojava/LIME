@@ -1,0 +1,339 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
+
+import javax.swing.*;
+import java.io.FileFilter;
+
+import mhframework.*;
+
+
+public class IMEScreenBase extends MHScreen
+{
+    private boolean singleScreen = true;
+    private boolean showOpenDialog = false;
+    private boolean showSaveDialog = false;
+    private boolean quitting = false;
+    private boolean newMap = false;
+
+
+    protected static MHGUIButtonMenu viewMenu;
+    protected static MHGUIButton mapViewButton;      // WYSIWYG map view
+    protected static MHGUIButton mapEditButton;      // Edit map tiles
+    //protected static MHGUIButton tilesetViewButton;  // View complete tile set
+
+    protected static MHGUIButtonMenu fileMenu;
+    protected static MHGUIButton fileNewButton;
+    protected static MHGUIButton fileSaveButton;
+    protected static MHGUIButton fileOpenButton;
+    protected static MHGUIButton fileExitButton;
+
+    public IMEScreenBase()
+    {
+        super();
+
+        viewMenu = new MHGUIButtonMenu();
+        viewMenu.setText("View");
+        viewMenu.setBackgroundColor(Color.LIGHT_GRAY);
+        viewMenu.setTextColor(Color.BLACK);
+        viewMenu.setButtonSize(60, 20);
+        viewMenu.setBorderSpacing(2);
+
+        mapViewButton = new MHGUIButton();
+        mapViewButton.setText("View");
+        mapViewButton.addActionListener(this);
+
+        mapEditButton = new MHGUIButton();
+        mapEditButton.setText("Edit");
+        mapEditButton.addActionListener(this);
+
+        //tilesetViewButton  = new MHGUIButton();
+        //tilesetViewButton.addActionListener(this);
+        //tilesetViewButton.setText("Tile Set");
+
+        viewMenu.add(mapViewButton);
+        viewMenu.add(mapEditButton);
+        //viewMenu.add(tilesetViewButton);
+
+        viewMenu.setPosition(640 - (int)viewMenu.getBounds().getWidth(), 0);
+
+
+        fileMenu = new MHGUIButtonMenu();
+        fileMenu.setText("File");
+        fileMenu.setBackgroundColor(Color.LIGHT_GRAY);
+        fileMenu.setTextColor(Color.BLACK);
+        fileMenu.setButtonSize(60, 20);
+        fileMenu.setBorderSpacing(2);
+
+        fileNewButton = new MHGUIButton();
+        fileNewButton.setText("New");
+        fileNewButton.addActionListener(this);
+
+        fileOpenButton = new MHGUIButton();
+        fileOpenButton.setText("Open");
+        fileOpenButton.addActionListener(this);
+
+        fileSaveButton = new MHGUIButton();
+        fileSaveButton.setText("Save");
+        fileSaveButton.addActionListener(this);
+
+        fileExitButton = new MHGUIButton();
+        fileExitButton.setText("Exit");
+        fileExitButton.addActionListener(this);
+
+        fileMenu.add(fileNewButton);
+        fileMenu.add(fileOpenButton);
+        fileMenu.add(fileSaveButton);
+        fileMenu.add(fileExitButton);
+
+        fileMenu.setPosition(viewMenu.getX(), (int)viewMenu.getBounds().getHeight()+2);
+
+        add(viewMenu);
+        add(fileMenu);
+
+        load();
+    }
+
+
+    public void load()
+    {
+        MHTileMap map = IMEDataModel.getInstance().map;
+
+        map.setScreenSpace(0, 0, 639 - (int)fileMenu.getBounds().getWidth(), 350);
+
+        Point origin = map.plotTile(0, 0);
+
+        origin.x -= map.getScreenSpace().getWidth()/2 -
+                    map.getTileWidth() / 2;
+
+        map.setScreenAnchor(origin);
+
+        map.setCursorPoint(origin);
+
+        setFinished(false);
+        singleScreen = true;
+    }
+
+
+    public void unload()
+    {
+        singleScreen = false;
+    }
+
+
+    public void render(Graphics g)
+    {
+        if (quitting)
+        {
+            int rc;
+
+            if (IMEDataModel.getInstance().mapChanged)
+            {
+                rc = JOptionPane.showConfirmDialog(MHDisplayModeChooser.getCanvas(), "The current map has changed.\nWould you like to save changes?", "Save Changes?", JOptionPane.YES_NO_CANCEL_OPTION);
+
+                if (rc == JOptionPane.YES_OPTION)
+                    IMEDataModel.getInstance().fileData.saveMapFile();
+                else if (rc == JOptionPane.CANCEL_OPTION)
+                {
+                    quitting = false;
+                    return;
+                }
+            }
+
+            IMEDataModel.getInstance().setProgramOver(true);
+        }
+        else if (singleScreen)
+        {
+            //g.setColor(Color.LIGHT_GRAY);
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, 640, 480);
+
+            // Draw map here
+            IMEDataModel.getInstance().map.render(g);
+
+            // Draw map interface stuff here
+            g.setColor(Color.LIGHT_GRAY);
+            // Bottom (tile set) panel
+            g.fillRect(0, 351, 640 - (int)fileMenu.getBounds().getWidth(), 480);
+            // Right (menu) panel
+            g.fillRect(640 - (int)viewMenu.getBounds().getWidth(), 0,
+                       (int)viewMenu.getBounds().getWidth(), 480);
+
+            // Credits
+            g.setColor(Color.BLACK);
+            g.drawString(IMEDataModel.APP_TITLE, 10, 442);
+            g.drawString("Version " + IMEDataModel.APP_VERSION, 10, 456);
+            g.drawString("by " + IMEDataModel.APP_AUTHOR, 10, 470);
+
+            // Map file info
+            MHMap map = IMEDataModel.getInstance().map.getMapData();
+            int x = 360, y = 370, dx = 150, dy = 16;
+            g.setColor(Color.GRAY);
+            g.drawLine(x-10, y+3, x + 260, y+3);
+            g.setColor(Color.BLACK);
+            g.drawString("Map Information File:", x+10, y);
+            g.drawString("Tile Set ID:", x+10, y + (dy));
+            g.drawString("Map Dimensions:", x+10, y + (dy*2));
+            g.drawString("Floor Data File:", x+10, y + (dy*3));
+            g.drawString("Item Data File:", x+10, y + (dy*4));
+            g.drawString("Wall Data File:", x+10, y + (dy*5));
+            g.drawString("Ceiling Data File:", x+10, y + (dy*6));
+
+            g.setColor(Color.BLUE);
+            g.drawString(map.getMapFileName(), x + dx, y);
+            g.drawString(map.getTileSetId()+"", x+dx, y + (dy));
+            g.drawString(map.getWidth() + " x " + map.getHeight(), x+dx, y + (dy*2));
+            g.drawString(map.getFloorFile(), x+dx, y + (dy*3));
+            g.drawString(map.getItemFile(), x+dx, y + (dy*4));
+            g.drawString(map.getWallFile(), x+dx, y + (dy*5));
+            g.drawString(map.getCeilingFile(), x+dx, y + (dy*6));
+
+            g.setColor(Color.LIGHT_GRAY);
+            g.draw3DRect(x-10, y-12, 270, dy*7, false);
+
+            // Bounding rectangle around the map area
+            Rectangle2D bounds = IMEDataModel.getInstance().map.getScreenSpace();
+            g.setColor(Color.BLUE);
+            g.drawRect((int)bounds.getX(), (int)bounds.getY(), (int)bounds.getWidth(), (int)bounds.getHeight());
+        }
+
+        if (showOpenDialog)
+        {
+            int rc;
+
+            if (IMEDataModel.getInstance().mapChanged)
+            {
+                rc = JOptionPane.showConfirmDialog(MHDisplayModeChooser.getCanvas(), "The current map has changed.\nWould you like to save changes?", "Save Changes?", JOptionPane.YES_NO_CANCEL_OPTION);
+
+                if (rc == JOptionPane.YES_OPTION)
+                {
+                    IMEDataModel.getInstance().fileData.saveMapFile();
+                    IMEDataModel.getInstance().mapChanged = false;
+                }
+                else if (rc == JOptionPane.CANCEL_OPTION)
+                {
+                    showOpenDialog = false;
+                    return;
+                }
+            }
+
+            JFileChooser openDlg = new JFileChooser();
+            rc = openDlg.showOpenDialog(MHDisplayModeChooser.getCanvas());
+            if (rc == JFileChooser.APPROVE_OPTION)
+            {
+                String file = openDlg.getSelectedFile().getName();
+
+                IMEDataModel.getInstance().loadMapFile(file);
+
+                load();
+            }
+
+            showOpenDialog = false;
+        }
+
+        if (showSaveDialog)
+        {
+            IMEDataModel.getInstance().fileData.saveMapFile();
+
+            showSaveDialog = false;
+            IMEDataModel.getInstance().mapChanged = false;
+        }
+
+        if (newMap)
+        {
+            JPanel mainPanel = new JPanel();
+            mainPanel.setLayout(new GridLayout(2, 4));
+
+            JLabel lblMapNum = new JLabel("Map Number:  ");
+            JLabel lblTileSet = new JLabel("Tile Set ID:  ");
+            JLabel lblWidth = new JLabel("Map Width:  ");
+            JLabel lblHeight = new JLabel("Map Height:  ");
+
+            JTextField txtMapNum = new JTextField("0");
+            JTextField txtTileSet = new JTextField("0");
+            JTextField txtWidth = new JTextField("20");
+            JTextField txtHeight = new JTextField("20");
+
+            mainPanel.add(lblMapNum);
+            mainPanel.add(txtMapNum);
+            mainPanel.add(lblTileSet);
+            mainPanel.add(txtTileSet);
+            mainPanel.add(lblWidth);
+            mainPanel.add(txtWidth);
+            mainPanel.add(lblHeight);
+            mainPanel.add(txtHeight);
+
+            JOptionPane.showMessageDialog(MHDisplayModeChooser.getCanvas(), mainPanel, "New Map", JOptionPane.PLAIN_MESSAGE);
+
+            newMap = false;
+        }
+
+        super.render(g);
+    }
+
+
+    public void advance()
+    {
+        IMEDataModel.getInstance().map.advance();
+
+    }
+
+
+    public void actionPerformed(ActionEvent e)
+    {
+        if (e.getSource() == mapViewButton)
+        {
+            setNextScreen(IMEDataModel.VIEW_SCREEN);
+            setFinished(true);
+        }
+        else if (e.getSource() == mapEditButton)
+        {
+            setNextScreen(IMEDataModel.EDIT_SCREEN);
+            setFinished(true);
+        }
+        else if (e.getSource() == fileNewButton)
+        {
+            newMap = true;
+        }
+        else if (e.getSource() == fileOpenButton)
+        {
+            showOpenDialog = true;
+        }
+        else if (e.getSource() == fileSaveButton)
+        {
+            showSaveDialog = true;
+        }
+        else if (e.getSource() == fileExitButton)
+        {
+            quitting = true;
+        }
+    }
+
+
+    public void keyPressed(KeyEvent e)
+    {
+        switch (e.getKeyCode())
+        {
+            case KeyEvent.VK_RIGHT:
+                IMEDataModel.getInstance().map.scrollMap(16, 0);
+                break;
+            case KeyEvent.VK_LEFT:
+                IMEDataModel.getInstance().map.scrollMap(-16, 0);
+                break;
+            case KeyEvent.VK_UP:
+                IMEDataModel.getInstance().map.scrollMap(0, -16);
+                break;
+            case KeyEvent.VK_DOWN:
+                IMEDataModel.getInstance().map.scrollMap(0, 16);
+                break;
+        }
+    }
+
+
+    public void mouseMoved(MouseEvent e)
+    {
+        super.mouseMoved(e);
+
+        IMEDataModel.getInstance().map.mouseMoved(e);
+    }
+}

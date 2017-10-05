@@ -1,0 +1,415 @@
+Buildfile: build.xml
+
+initbuild:
+     [echo] Type "ant -projecthelp" for help
+     [echo] The following values may be set in the file build.properties:
+     [echo]   project.name   = LIME
+     [echo]   main.name      = IsoMapEditor
+     [echo]   resource.pat   = resources/**/*
+     [echo]   source.version = 1.6
+     [echo]   compiler.args  = -Xlint
+    [mkdir] Created dir: C:\Dev\LIME\bin\classes
+    [mkdir] Created dir: C:\Dev\LIME\bin\doc-public
+    [mkdir] Created dir: C:\Dev\LIME\bin\doc-private
+    [mkdir] Created dir: C:\Dev\LIME\bin\dependencies
+
+source:
+      [zip] Building zip: C:\Dev\LIME\bin\LIME-src.zip
+     [echo] You may now hand in the file "bin/LIME-src.zip"
+
+compile:
+    [javac] Compiling 8 source files to C:\Dev\LIME\bin\classes
+    [javac] C:\Dev\LIME\src\IMEDataModel.java:3: package mhframework0202 does not exist
+    [javac] import mhframework0202.MHActor;
+    [javac]                       ^
+    [javac] C:\Dev\LIME\src\IMEDataModel.java:4: package mhframework0202 does not exist
+    [javac] import mhframework0202.MHDataModel;
+    [javac]                       ^
+    [javac] C:\Dev\LIME\src\IMEDataModel.java:5: package mhframework0202 does not exist
+    [javac] import mhframework0202.MHObjectVendor;
+    [javac]                       ^
+    [javac] C:\Dev\LIME\src\IMEDataModel.java:6: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHDiamondMap;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMEDataModel.java:7: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHIsometricMap;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMEDataModel.java:8: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHMap;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMEDataModel.java:9: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHMapFileInfo;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMEDataModel.java:10: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHStaggeredMap;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMEDataModel.java:13: cannot find symbol
+    [javac] symbol: class MHDataModel
+    [javac] public class IMEDataModel extends MHDataModel
+    [javac]                                   ^
+    [javac] C:\Dev\LIME\src\IMEDataModel.java:22: cannot find symbol
+    [javac] symbol  : class MHStaggeredMap
+    [javac] location: class IMEDataModel
+    [javac]     public MHStaggeredMap staggeredMap;
+    [javac]            ^
+    [javac] C:\Dev\LIME\src\IMEDataModel.java:23: cannot find symbol
+    [javac] symbol  : class MHDiamondMap
+    [javac] location: class IMEDataModel
+    [javac]     public MHDiamondMap diamondMap;
+    [javac]            ^
+    [javac] C:\Dev\LIME\src\IMEDataModel.java:24: cannot find symbol
+    [javac] symbol  : class MHIsometricMap
+    [javac] location: class IMEDataModel
+    [javac]     public MHIsometricMap map;
+    [javac]            ^
+    [javac] C:\Dev\LIME\src\IMEFileData.java:4: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHMap;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMEFileData.java:5: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHMapCell;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMEFileData.java:6: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHMapFileInfo;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMEFileData.java:7: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHTileSetManager;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMEDataModel.java:73: cannot find symbol
+    [javac] symbol  : class MHMapFileInfo
+    [javac] location: class IMEDataModel
+    [javac]     public void newMap(final int width, final int height, final int mapNumber, final int tileSetID, final MHMapFileInfo fileInfo)
+    [javac]                                                                                                           ^
+    [javac] C:\Dev\LIME\src\IMEDataModel.java:93: cannot find symbol
+    [javac] symbol: class MHObjectVendor
+    [javac] class IMEVendor implements MHObjectVendor
+    [javac]                            ^
+    [javac] C:\Dev\LIME\src\IMEDataModel.java:95: cannot find symbol
+    [javac] symbol  : class MHActor
+    [javac] location: class IMEVendor
+    [javac]     public MHActor getObject(final int layer, final int tileID)
+    [javac]            ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:9: package mhframework0202 does not exist
+    [javac] import mhframework0202.MHActor;
+    [javac]                       ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:10: package mhframework0202 does not exist
+    [javac] import mhframework0202.MHDisplayModeChooser;
+    [javac]                       ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:11: package mhframework0202 does not exist
+    [javac] import mhframework0202.MHScreen;
+    [javac]                       ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:12: package mhframework0202.gui does not exist
+    [javac] import mhframework0202.gui.MHGUIButton;
+    [javac]                           ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:13: package mhframework0202.gui does not exist
+    [javac] import mhframework0202.gui.MHGUIButtonMenu;
+    [javac]                           ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:14: package mhframework0202.gui does not exist
+    [javac] import mhframework0202.gui.MHGUILabel;
+    [javac]                           ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:15: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHMapCell;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:16: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHMapCellAddress;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:17: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHTileSetManager;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:22: cannot find symbol
+    [javac] symbol: class MHScreen
+    [javac] public class IMEEditScreen extends MHScreen
+    [javac]                                    ^
+    [javac] C:\Dev\LIME\src\IMETileSetNavigator.java:12: package mhframework0202 does not exist
+    [javac] import mhframework0202.MHActor;
+    [javac]                       ^
+    [javac] C:\Dev\LIME\src\IMETileSetNavigator.java:13: package mhframework0202.gui does not exist
+    [javac] import mhframework0202.gui.MHGUIButton;
+    [javac]                           ^
+    [javac] C:\Dev\LIME\src\IMETileSetNavigator.java:14: package mhframework0202.gui does not exist
+    [javac] import mhframework0202.gui.MHGUIComponent;
+    [javac]                           ^
+    [javac] C:\Dev\LIME\src\IMETileSetNavigator.java:15: package mhframework0202.gui does not exist
+    [javac] import mhframework0202.gui.MHGUIComponentList;
+    [javac]                           ^
+    [javac] C:\Dev\LIME\src\IMETileSetNavigator.java:16: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHIsoMouseMap;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMETileSetNavigator.java:17: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHMapCell;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMETileSetNavigator.java:18: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHTileSetManager;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMETileSetNavigator.java:23: cannot find symbol
+    [javac] symbol: class MHGUIComponent
+    [javac] public class IMETileSetNavigator extends MHGUIComponent //MHGUIButtonMenu
+    [javac]                                          ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:26: cannot find symbol
+    [javac] symbol  : class MHGUIButtonMenu
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUIButtonMenu layerViewMenu;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:27: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUIButton viewItemsButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:28: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUIButton viewWallsButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:29: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUIButton viewDetailsButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:30: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUIButton viewCeilingsButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:32: cannot find symbol
+    [javac] symbol  : class MHGUIButtonMenu
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUIButtonMenu layerEditMenu;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:33: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUIButton editFloorButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:34: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUIButton editItemsButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:35: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUIButton editWallsButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:36: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUIButton editDetailsButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:37: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUIButton editCeilingsButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:39: cannot find symbol
+    [javac] symbol  : class MHGUIButtonMenu
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUIButtonMenu toolsMenu;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:40: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUIButton toolsEraseButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:41: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUIButton toolsPickButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:44: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUIButton exitButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:46: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUIButton tsBackButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:47: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUIButton tsForwardButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:50: cannot find symbol
+    [javac] symbol  : class MHGUILabel
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUILabel tileSetLabel;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:51: cannot find symbol
+    [javac] symbol  : class MHGUILabel
+    [javac] location: class IMEEditScreen
+    [javac]     protected static MHGUILabel selectedLabel;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEEditScreen.java:62: cannot find symbol
+    [javac] symbol  : class MHActor
+    [javac] location: class IMEEditScreen
+    [javac]     private MHActor selectedTile = null;
+    [javac]             ^
+    [javac] C:\Dev\LIME\src\IMETileSetNavigator.java:32: cannot find symbol
+    [javac] symbol  : class MHGUIComponentList
+    [javac] location: class IMETileSetNavigator
+    [javac]     private final MHGUIComponentList buttons = new MHGUIComponentList();
+    [javac]                   ^
+    [javac] C:\Dev\LIME\src\IMETileSetNavigator.java:34: cannot find symbol
+    [javac] symbol  : class MHActor
+    [javac] location: class IMETileSetNavigator
+    [javac]     private MHActor selectedTile = null;
+    [javac]             ^
+    [javac] C:\Dev\LIME\src\IMETileSetNavigator.java:171: cannot find symbol
+    [javac] symbol  : class MHActor
+    [javac] location: class IMETileSetNavigator
+    [javac]     public MHActor getSelectedTile()
+    [javac]            ^
+    [javac] C:\Dev\LIME\src\IMETileSetNavigator.java:251: cannot find symbol
+    [javac] symbol  : class MHGUIComponentList
+    [javac] location: class IMETileSetNavigator
+    [javac]     public MHGUIComponentList getButtons()
+    [javac]            ^
+    [javac] C:\Dev\LIME\src\IMENewMapScreen.java:4: package mhframework0202 does not exist
+    [javac] import mhframework0202.MHGameApplication;
+    [javac]                       ^
+    [javac] C:\Dev\LIME\src\IMENewMapScreen.java:5: package mhframework0202 does not exist
+    [javac] import mhframework0202.MHVideoSettings;
+    [javac]                       ^
+    [javac] C:\Dev\LIME\src\IMENewMapScreen.java:6: package mhframework0202.gui does not exist
+    [javac] import mhframework0202.gui.MHGUIDialogScreen;
+    [javac]                           ^
+    [javac] C:\Dev\LIME\src\IMENewMapScreen.java:7: package mhframework0202.gui does not exist
+    [javac] import mhframework0202.gui.MHGUILabel;
+    [javac]                           ^
+    [javac] C:\Dev\LIME\src\IMENewMapScreen.java:8: package mhframework0202.gui does not exist
+    [javac] import mhframework0202.gui.MHGUINumericCycleControl;
+    [javac]                           ^
+    [javac] C:\Dev\LIME\src\IMENewMapScreen.java:11: cannot find symbol
+    [javac] symbol: class MHGUIDialogScreen
+    [javac] public class IMENewMapScreen extends MHGUIDialogScreen
+    [javac]                                      ^
+    [javac] C:\Dev\LIME\src\IMENewMapScreen.java:19: cannot find symbol
+    [javac] symbol  : class MHGUINumericCycleControl
+    [javac] location: class IMENewMapScreen
+    [javac]     private final MHGUINumericCycleControl cycWidth, cycHeight, cycTileSet, cycMapNumber;
+    [javac]                   ^
+    [javac] C:\Dev\LIME\src\IMENewMapScreen.java:20: cannot find symbol
+    [javac] symbol  : class MHGUILabel
+    [javac] location: class IMENewMapScreen
+    [javac]     private final MHGUILabel lblWidth, lblHeight, lblTileSet, lblMapNumber;
+    [javac]                   ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:12: package mhframework0202 does not exist
+    [javac] import mhframework0202.MHDisplayModeChooser;
+    [javac]                       ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:13: package mhframework0202 does not exist
+    [javac] import mhframework0202.MHGame;
+    [javac]                       ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:14: package mhframework0202 does not exist
+    [javac] import mhframework0202.MHScreen;
+    [javac]                       ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:15: package mhframework0202.gui does not exist
+    [javac] import mhframework0202.gui.MHGUIButton;
+    [javac]                           ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:16: package mhframework0202.gui does not exist
+    [javac] import mhframework0202.gui.MHGUIButtonMenu;
+    [javac]                           ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:17: package mhframework0202.gui does not exist
+    [javac] import mhframework0202.gui.MHGUIDialogScreen;
+    [javac]                           ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:18: package mhframework0202.gui does not exist
+    [javac] import mhframework0202.gui.MHGUIFileDialogScreen;
+    [javac]                           ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:19: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHMap;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:20: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHMapFileInfo;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:21: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHTileMap;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:24: cannot find symbol
+    [javac] symbol: class MHScreen
+    [javac] public class IMEScreenBase extends MHScreen
+    [javac]                                    ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:34: cannot find symbol
+    [javac] symbol  : class MHGUIDialogScreen
+    [javac] location: class IMEScreenBase
+    [javac]     private MHGUIDialogScreen dlgSave;
+    [javac]             ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:35: cannot find symbol
+    [javac] symbol  : class MHGUIFileDialogScreen
+    [javac] location: class IMEScreenBase
+    [javac]     private MHGUIFileDialogScreen dlgOpen;
+    [javac]             ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:38: cannot find symbol
+    [javac] symbol  : class MHGUIButtonMenu
+    [javac] location: class IMEScreenBase
+    [javac]     protected static MHGUIButtonMenu viewMenu;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:39: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEScreenBase
+    [javac]     protected static MHGUIButton mapViewButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:40: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEScreenBase
+    [javac]     protected static MHGUIButton mapEditButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:42: cannot find symbol
+    [javac] symbol  : class MHGUIButtonMenu
+    [javac] location: class IMEScreenBase
+    [javac]     protected static MHGUIButtonMenu fileMenu;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:43: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEScreenBase
+    [javac]     protected static MHGUIButton fileNewButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:44: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEScreenBase
+    [javac]     protected static MHGUIButton fileSaveButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:45: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEScreenBase
+    [javac]     protected static MHGUIButton fileOpenButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEScreenBase.java:46: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEScreenBase
+    [javac]     protected static MHGUIButton fileExitButton;
+    [javac]                      ^
+    [javac] C:\Dev\LIME\src\IMEViewScreen.java:7: package mhframework0202 does not exist
+    [javac] import mhframework0202.MHDisplayModeChooser;
+    [javac]                       ^
+    [javac] C:\Dev\LIME\src\IMEViewScreen.java:8: package mhframework0202 does not exist
+    [javac] import mhframework0202.MHScreen;
+    [javac]                       ^
+    [javac] C:\Dev\LIME\src\IMEViewScreen.java:9: package mhframework0202.gui does not exist
+    [javac] import mhframework0202.gui.MHGUIButton;
+    [javac]                           ^
+    [javac] C:\Dev\LIME\src\IMEViewScreen.java:10: package mhframework0202.tilemap does not exist
+    [javac] import mhframework0202.tilemap.MHTileMap;
+    [javac]                               ^
+    [javac] C:\Dev\LIME\src\IMEViewScreen.java:16: cannot find symbol
+    [javac] symbol: class MHScreen
+    [javac] public class IMEViewScreen extends MHScreen
+    [javac]                                    ^
+    [javac] C:\Dev\LIME\src\IMEViewScreen.java:18: cannot find symbol
+    [javac] symbol  : class MHGUIButton
+    [javac] location: class IMEViewScreen
+    [javac] 	MHGUIButton exitButton;
+    [javac] 	^
+    [javac] C:\Dev\LIME\src\IsoMapEditor.java:1: package mhframework0202 does not exist
+    [javac] import mhframework0202.MHGameApplication;
+    [javac]                       ^
+    [javac] C:\Dev\LIME\src\IsoMapEditor.java:2: package mhframework0202 does not exist
+    [javac] import mhframework0202.MHVideoSettings;
+    [javac]                       ^
+    [javac] C:\Dev\LIME\src\IMEDataModel.java:26: cannot find symbol
+    [javac] symbol  : variable MHMapFileInfo
+    [javac] location: class IMEDataModel
+    [javac]     String mapFile = "M9999999" + MHMapFileInfo.MAP_FILE_EXTENSION;
+    [javac]                                   ^
+    [javac] C:\Dev\LIME\src\IMEDataModel.java:48: operator == cannot be applied to IMEDataModel,<nulltype>
+    [javac]         if (INSTANCE == null)
+    [javac]                      ^
+    [javac] 100 errors

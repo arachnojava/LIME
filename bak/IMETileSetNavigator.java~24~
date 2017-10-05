@@ -1,0 +1,229 @@
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+
+import mhframework.MHGUIButton;
+import mhframework.MHGUIComponent;
+import mhframework.MHGUIComponentList;
+import mhframework.MHMapCell;
+import mhframework.MHStaticActor;
+import mhframework.MHTileSetManager;
+
+/**
+ *
+ */
+public class IMETileSetNavigator extends MHGUIComponent //MHGUIButtonMenu
+{
+
+    private int buttonSize = 96;
+    private int firstTile = 0;
+    private int numTilesShown = 5;
+
+    private MHGUIComponentList buttons = new MHGUIComponentList();
+
+    private MHStaticActor selectedTile = null;
+
+    private int layer;
+
+    private ActionListener actionListener;
+
+    /**
+     * Constructor for IMETileSetNavigator.
+     */
+    public IMETileSetNavigator()
+    {
+        super();
+
+        this.setSize(buttonSize*numTilesShown, buttonSize);
+
+        MHGUIButton button;
+        MHTileSetManager tsm = IMEDataModel.getInstance().getTileSetManager();
+        Image image;
+
+        for (int i = 0; i < numTilesShown; i++)
+        {
+            button = new MHGUIButton();
+            button.setType(MHGUIButton.TYPE_IMAGE_BUTTON);
+            button.setText(" ");
+            button.setSize(buttonSize, buttonSize);
+
+            buttons.add(i, button);
+        }
+
+        setLayer(MHMapCell.FLOOR_LAYER);
+        firstTile = 0;
+        setSelectedTile(0);
+    }
+
+
+    public void advance()
+    {
+        MHTileSetManager tsm = IMEDataModel.getInstance().getTileSetManager();
+        Image image;
+        int buttonIndex = 0;
+
+        for (int i = firstTile; i < firstTile + numTilesShown; i++)
+        {
+            MHGUIButton button = (MHGUIButton) buttons.get(buttonIndex);
+            image = button.getIcon();
+
+            if (tsm != null)
+            {
+                image = tsm.getTileImage(layer, i, 0);
+                button.setIcon(image);
+            }
+
+            buttonIndex++;
+        }
+
+        try {
+            if (firstTile + numTilesShown > IMEDataModel.getInstance().getTileSetManager().getTileImageGroup(layer).getNumSequences())
+                firstTile = 0;
+        } catch (Exception e) {}
+
+    }
+
+
+    public void render(Graphics g)
+    {
+        BufferedImage image = new BufferedImage((int)getBounds().getWidth(),
+                                                (int)getBounds().getHeight(),
+                                                BufferedImage.TYPE_INT_RGB);
+
+        Graphics2D bg = (Graphics2D) image.getGraphics();
+
+        bg.setColor(Color.LIGHT_GRAY);
+        bg.fill3DRect(0, 0, buttonSize*numTilesShown, buttonSize, false);
+
+        bg.setFont(new Font("Monospaced", Font.PLAIN, 10));
+
+        for (int i = 0; i < buttons.getSize(); i++)
+        {
+            MHGUIButton button = (MHGUIButton) buttons.get(i);
+            Image buttonIcon = button.getIcon();
+
+            if (buttonIcon != null)
+            {
+                button.setPosition(i*buttonSize, buttonSize - buttonIcon.getHeight(null) - 16);
+                button.render(bg);
+                int tileNumber = firstTile + i;
+
+                bg.setColor(Color.WHITE);
+                bg.drawString(tileNumber+"", i*buttonSize+2, buttonSize-2);
+            }
+        }
+
+        g.drawImage(image, getX(), getY(), null);
+    }
+
+
+    public void scrollRight()
+    {
+        if (firstTile + numTilesShown < IMEDataModel.getInstance().getTileSetManager().getTileImageGroup(layer).getNumSequences())
+            firstTile++;
+    }
+
+
+    public void scrollLeft()
+    {
+        if (firstTile > 0)
+            firstTile--;
+    }
+
+
+    /**
+     * Sets the layer.
+     * @param layer The layer to set
+     */
+    public void setLayer(int layer)
+    {
+        this.layer = layer;
+    }
+
+
+    public MHStaticActor getSelectedTile()
+    {
+        return selectedTile;
+    }
+
+
+    public void mousePressed(MouseEvent e)
+    {
+        Point p = e.getPoint();
+
+        if (!getBounds().contains(p))
+            return;
+
+        p.x -= getX();
+        p.y -= getY();
+
+        for (int i = 0; i < buttons.getSize(); i++)
+        {
+            if (buttons.get(i).getBounds().contains(p))
+            {
+                setSelectedTile(i);
+
+                ActionEvent thisEvent = new ActionEvent(this, ActionEvent.ACTION_PERFORMED, "");
+
+                if (this.actionListener != null)
+                    actionListener.actionPerformed(thisEvent);
+            }
+        }
+    }
+
+    private void setSelectedTile(int buttonIndex)
+    {
+        selectedTile = new MHStaticActor();
+        selectedTile.setImageGroup(IMEDataModel.getInstance().getTileSetManager().getTileImageGroup(layer));
+        selectedTile.setAction(firstTile + buttonIndex);
+    }
+
+    public void mouseReleased(MouseEvent e)
+    {
+    }
+
+    public void mouseClicked(MouseEvent e)
+    {
+    }
+
+    public void mouseMoved(MouseEvent e)
+    {
+    }
+
+
+    public void keyPressed(KeyEvent e)
+    {
+    }
+
+    public void keyReleased(KeyEvent e)
+    {
+    }
+
+    public void keyTyped(KeyEvent e)
+    {
+    }
+
+    public void addActionListener(java.awt.event.ActionListener listener)
+    {
+        this.actionListener = listener;
+    }
+
+
+    /**
+     * Returns the buttons.
+     * @return MHGUIComponentList
+     */
+    public MHGUIComponentList getButtons()
+    {
+        return buttons;
+    }
+
+}

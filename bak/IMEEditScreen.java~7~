@@ -1,0 +1,382 @@
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.geom.Rectangle2D;
+
+import mhframework.MHGUIButton;
+import mhframework.MHGUIButtonMenu;
+import mhframework.MHGUILabel;
+import mhframework.MHMapCell;
+import mhframework.MHMapCellAddress;
+import mhframework.MHScreen;
+import mhframework.MHStaticActor;
+
+/**
+ *
+ */
+public class IMEEditScreen extends MHScreen
+{
+    private IMETileSetNavigator navigator = new IMETileSetNavigator();
+
+    protected static MHGUIButtonMenu layerViewMenu;
+    protected static MHGUIButton viewItemsButton;
+    protected static MHGUIButton viewWallsButton;
+    protected static MHGUIButton viewCeilingsButton;
+
+    protected static MHGUIButtonMenu layerEditMenu;
+    protected static MHGUIButton editFloorButton;
+    protected static MHGUIButton editItemsButton;
+    protected static MHGUIButton editWallsButton;
+    protected static MHGUIButton editCeilingsButton;
+
+
+    protected static MHGUIButton exitButton;
+
+    protected static MHGUIButton tsBackButton;
+    protected static MHGUIButton tsForwardButton;
+
+
+    protected static MHGUILabel tileSetLabel;
+    protected static MHGUILabel selectedLabel;
+
+    private boolean[] layerFlags = new boolean[MHMapCell.NUM_LAYERS];
+
+    private int selectedLayer = MHMapCell.FLOOR_LAYER;
+
+    private MHStaticActor selectedTile = null;
+
+    /****************************************************************
+     */
+    public IMEEditScreen()
+    {
+        super();
+
+        navigator.setPosition(25, 375);
+        navigator.addActionListener(this);
+        this.add(navigator);
+
+        layerViewMenu = new MHGUIButtonMenu();
+        layerViewMenu.setText("View");
+        layerViewMenu.setBackgroundColor(Color.LIGHT_GRAY);
+        layerViewMenu.setTextColor(Color.BLACK);
+        layerViewMenu.setButtonSize(60, 20);
+        layerViewMenu.setBorderSpacing(2);
+
+        viewItemsButton = new MHGUIButton();
+        viewItemsButton.setText("Items");
+        viewItemsButton.addActionListener(this);
+
+        viewWallsButton  = new MHGUIButton();
+        viewWallsButton.addActionListener(this);
+        viewWallsButton.setText("Walls");
+
+        viewCeilingsButton  = new MHGUIButton();
+        viewCeilingsButton.addActionListener(this);
+        viewCeilingsButton.setText("Ceilings");
+
+        layerViewMenu.add(viewCeilingsButton);
+        layerViewMenu.add(viewWallsButton);
+        layerViewMenu.add(viewItemsButton);
+        //layersMenu.add(layersFloorButton);
+
+        layerViewMenu.setPosition(640 - (int)layerViewMenu.getBounds().getWidth(), 0);
+
+
+        layerEditMenu = new MHGUIButtonMenu();
+        layerEditMenu.setText("Edit");
+        layerEditMenu.setBackgroundColor(Color.LIGHT_GRAY);
+        layerEditMenu.setTextColor(Color.BLACK);
+        layerEditMenu.setButtonSize(60, 20);
+        layerEditMenu.setBorderSpacing(2);
+
+        editFloorButton = new MHGUIButton();
+        editFloorButton.setText("Floor");
+        editFloorButton.addActionListener(this);
+
+        editItemsButton = new MHGUIButton();
+        editItemsButton.setText("Items");
+        editItemsButton.addActionListener(this);
+
+        editWallsButton  = new MHGUIButton();
+        editWallsButton.addActionListener(this);
+        editWallsButton.setText("Walls");
+
+        editCeilingsButton  = new MHGUIButton();
+        editCeilingsButton.addActionListener(this);
+        editCeilingsButton.setText("Ceilings");
+
+        layerEditMenu.add(editCeilingsButton);
+        layerEditMenu.add(editWallsButton);
+        layerEditMenu.add(editItemsButton);
+        layerEditMenu.add(editFloorButton);
+
+        layerEditMenu.setPosition(layerViewMenu.getX(),
+                                  (int)layerViewMenu.getBounds().getHeight()+2);
+
+        exitButton  = new MHGUIButton();
+        exitButton.addActionListener(this);
+        exitButton.setText("Done");
+        exitButton.setSize(60, 20);
+        exitButton.setPosition(layerEditMenu.getX() + 2,
+                               layerEditMenu.getY() + (int)layerEditMenu.getBounds().getHeight() + 22);
+
+        tsBackButton = new MHGUIButton();
+        tsBackButton.addActionListener(this);
+        tsBackButton.setText("<");
+        tsBackButton.setSize(10, 96);
+        tsBackButton.setPosition(10, 375);
+
+        tsForwardButton = new MHGUIButton();
+        tsForwardButton.addActionListener(this);
+        tsForwardButton.setText(">");
+        tsForwardButton.setSize(10, 96);
+        tsForwardButton.setPosition(510, 375);
+
+        tileSetLabel = new MHGUILabel("Tile Set:");
+
+        selectedLabel = new MHGUILabel("Selected Tile:");
+
+
+        add(layerViewMenu);
+        add(layerEditMenu);
+        add(exitButton);
+        add(tileSetLabel);
+        add(tsBackButton);
+        add(tsForwardButton);
+        add(selectedLabel);
+
+        for (int i = 0; i < layerFlags.length; i++)
+            layerFlags[i] = true;
+
+        load();
+    }
+
+
+    public void load()
+    {
+        IMEDataModel.getInstance().map.setScreenSpace(0, 0, 639 -
+                                        (int)layerViewMenu.getBounds().getWidth(), 350);
+
+        setFinished(false);
+    }
+
+
+    public void unload()
+    {
+    }
+
+
+    public void render(Graphics g)
+    {
+            g.setColor(Color.BLACK);
+            g.fillRect(0, 0, 640, 480);
+
+            // Draw map here
+            IMEDataModel.getInstance().map.render(g, layerFlags);
+
+            // Draw map interface stuff here
+            g.setColor(Color.LIGHT_GRAY);
+            // Bottom (tile set) panel
+            g.fillRect(0, 351, 640 - (int)layerViewMenu.getBounds().getWidth(), 480);
+            // Right (menu) panel
+            g.fillRect(640 - (int)layerViewMenu.getBounds().getWidth(), 0,
+                       (int)layerViewMenu.getBounds().getWidth(), 480);
+
+            Rectangle2D bounds = IMEDataModel.getInstance().map.getScreenSpace();
+            g.setColor(Color.BLUE);
+            g.drawRect((int)bounds.getX(), (int)bounds.getY(), (int)bounds.getWidth(), (int)bounds.getHeight());
+
+            // Tile set navigator
+            tileSetLabel.setPosition(10, (int)bounds.getHeight() + 20);
+            navigator.render(g);
+
+            // Selected Tile:
+            g.setColor(Color.LIGHT_GRAY);
+            g.fill3DRect(535, 375, 96, 96, false);
+            if (selectedTile != null)
+            {
+                java.awt.Image image = selectedTile.getImage();
+                if (image != null)
+                {
+                    selectedTile.setLocation(535 + (96 / 2) -
+                                             image.getWidth(null) / 2,
+                                             375 + (96 / 2) -
+                                             image.getHeight(null) / 2);
+                    selectedTile.render(g);
+                }
+            }
+            selectedLabel.setPosition(535, (int)bounds.getHeight() + 20);
+
+            // Map cursor
+            MHMapCellAddress cursor = IMEDataModel.getInstance().map.getCursorAddress();
+            g.setColor(Color.WHITE);
+            g.drawString("Map Cell:  " + cursor.row + ", " + cursor.column, 10, 12);
+        super.render(g);
+    }
+
+
+    public void advance()
+    {
+        IMEDataModel.getInstance().map.advance();
+
+        navigator.setLayer(selectedLayer);
+        navigator.advance();
+
+        if (layerFlags[MHMapCell.ITEM_LAYER])
+            viewItemsButton.setForeColor(Color.GREEN);
+        else
+            viewItemsButton.setForeColor(Color.RED);
+
+        if (layerFlags[MHMapCell.WALL_LAYER])
+            viewWallsButton.setForeColor(Color.GREEN);
+        else
+            viewWallsButton.setForeColor(Color.RED);
+
+        if (layerFlags[MHMapCell.CEILING_LAYER])
+            viewCeilingsButton.setForeColor(Color.GREEN);
+        else
+            viewCeilingsButton.setForeColor(Color.RED);
+
+        if (selectedLayer == MHMapCell.FLOOR_LAYER)
+        {
+            editFloorButton.setNormalColor(Color.BLUE);
+            editFloorButton.setOverColor(Color.BLUE);
+            editFloorButton.setForeColor(Color.WHITE);
+        }
+        else
+        {
+            editFloorButton.setNormalColor(MHGUIButton.NORMAL_COLOR);
+            editFloorButton.setOverColor(MHGUIButton.OVER_COLOR);
+            editFloorButton.setForeColor(Color.BLACK);
+        }
+
+        if (selectedLayer == MHMapCell.WALL_LAYER)
+        {
+            editWallsButton.setNormalColor(Color.BLUE);
+            editWallsButton.setOverColor(Color.BLUE);
+            editWallsButton.setForeColor(Color.WHITE);
+        }
+        else
+        {
+            editWallsButton.setNormalColor(MHGUIButton.NORMAL_COLOR);
+            editWallsButton.setOverColor(MHGUIButton.OVER_COLOR);
+            editWallsButton.setForeColor(Color.BLACK);
+        }
+
+        if (selectedLayer == MHMapCell.ITEM_LAYER)
+        {
+            editItemsButton.setNormalColor(Color.BLUE);
+            editItemsButton.setOverColor(Color.BLUE);
+            editItemsButton.setForeColor(Color.WHITE);
+        }
+        else
+        {
+            editItemsButton.setNormalColor(MHGUIButton.NORMAL_COLOR);
+            editItemsButton.setOverColor(MHGUIButton.OVER_COLOR);
+            editItemsButton.setForeColor(Color.BLACK);
+        }
+
+        if (selectedLayer == MHMapCell.CEILING_LAYER)
+        {
+            editCeilingsButton.setNormalColor(Color.BLUE);
+            editCeilingsButton.setOverColor(Color.BLUE);
+            editCeilingsButton.setForeColor(Color.WHITE);
+        }
+        else
+        {
+            editCeilingsButton.setNormalColor(MHGUIButton.NORMAL_COLOR);
+            editCeilingsButton.setOverColor(MHGUIButton.OVER_COLOR);
+            editCeilingsButton.setForeColor(Color.BLACK);
+        }
+    }
+
+
+    public void actionPerformed(ActionEvent e)
+    {
+        if (e.getSource() == viewItemsButton)
+        {
+            if (selectedLayer != MHMapCell.ITEM_LAYER)
+                layerFlags[MHMapCell.ITEM_LAYER] = !layerFlags[MHMapCell.ITEM_LAYER];
+        }
+        else if (e.getSource() == viewWallsButton)
+        {
+            if (selectedLayer != MHMapCell.WALL_LAYER)
+                layerFlags[MHMapCell.WALL_LAYER] = !layerFlags[MHMapCell.WALL_LAYER];
+        }
+        else if (e.getSource() == viewCeilingsButton)
+        {
+            if (selectedLayer != MHMapCell.CEILING_LAYER)
+                layerFlags[MHMapCell.CEILING_LAYER] = !layerFlags[MHMapCell.CEILING_LAYER];
+        }
+        else if (e.getSource() == editFloorButton)
+        {
+            selectedLayer = MHMapCell.FLOOR_LAYER;
+        }
+        else if (e.getSource() == editItemsButton)
+        {
+            selectedLayer = MHMapCell.ITEM_LAYER;
+            layerFlags[MHMapCell.ITEM_LAYER] = true;
+        }
+        else if (e.getSource() == editWallsButton)
+        {
+            selectedLayer = MHMapCell.WALL_LAYER;
+            layerFlags[MHMapCell.WALL_LAYER] = true;
+        }
+        else if (e.getSource() == editCeilingsButton)
+        {
+            selectedLayer = MHMapCell.CEILING_LAYER;
+            layerFlags[MHMapCell.CEILING_LAYER] = true;
+        }
+        else if (e.getSource() == tsBackButton)
+        {
+            navigator.scrollLeft();
+        }
+        else if (e.getSource() == tsForwardButton)
+        {
+            navigator.scrollRight();
+        }
+        else if (e.getSource() == exitButton)
+        {
+            setNextScreen(null);
+            setFinished(true);
+        }
+
+
+    }
+
+
+    public void keyPressed(KeyEvent e)
+    {
+        switch (e.getKeyCode())
+        {
+            case KeyEvent.VK_RIGHT:
+                IMEDataModel.getInstance().map.scrollMap(16, 0);
+                break;
+            case KeyEvent.VK_LEFT:
+                IMEDataModel.getInstance().map.scrollMap(-16, 0);
+                break;
+            case KeyEvent.VK_UP:
+                IMEDataModel.getInstance().map.scrollMap(0, -16);
+                break;
+            case KeyEvent.VK_DOWN:
+                IMEDataModel.getInstance().map.scrollMap(0, 16);
+                break;
+        }
+    }
+
+
+/*	public void mousePressed(MouseEvent e)
+    {
+        super.mousePressed(e);
+        navigator.mousePressed(e);
+    }
+*/
+    public void mouseMoved(MouseEvent e)
+    {
+        super.mouseMoved(e);
+
+        IMEDataModel.getInstance().map.mouseMoved(e);
+    }
+}

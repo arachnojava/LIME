@@ -1,0 +1,14 @@
+#Fat Jar Configuration File
+#Sat Mar 03 15:24:38 CST 2012
+onejar.license.required=false
+manifest.classpath=
+manifest.removesigners=true
+onejar.checkbox=true
+jarname=LIME_fat.jar
+manifest.mergeall=true
+manifest.mainclass=IsoMapEditor
+manifest.file=mainClass.txt
+jarname.isextern=false
+onejar.expand=
+excludes=
+includes=
